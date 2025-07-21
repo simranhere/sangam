@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organiser Form</title>
+
+  <!-- bootstrap cdn -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- BODY STYLING -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .form-container {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 40px;
+      border: 2px solid #000;
+      background-color: #fff;
+      border-radius: 10px;
+      color: #000;
+    }
+
+    #prev {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+  <!-- JQUERY SCRIPT  -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+
+  <!-- SEARCH AJAX CALL -->
+<script>
+  $(document).ready(function () {
+    $("#btnSearchAJAX").click(function () {
+      let obj = {
+        type: "get",
+        url: "/get-one",
+        data: {
+          emailid: $("#emailid").val()
+        }
+      }
+      $.ajax(obj).then(function (responseJsonAry) {
+        let org = responseJsonAry[0];
+
+        // Populate fields
+        $("#orgname").val(org.orgname);
+        $("#regnumber").val(org.regnumber);
+        $("#address").val(org.address);
+        $("#city").val(org.city);
+        $("#sports").val(org.sports);
+        $("#website").val(org.website);
+        $("#insta").val(org.insta);
+        $("#head").val(org.head);
+        $("#contact").val(org.contact);
+        $("#otherinfo").val(org.otherinfo);
+        $("#prev").prop("src", org.picurl);
+        $("#hdn").val(org.picurl); // storing previous pic
+
+      }).fail(function (err) {
+        alert("Error: " + err.responseText);
+        console.log(err);
+      });
+    });
+  });
+</script>
+<!-- PIC UPLOAD FUNCTION -->
+  <script>
+    function showPrev(fileRef, prevRef) {
+      const [file] = fileRef.files;
+      if (file) {
+        prevRef.src = URL.createObjectURL(file);
+      }
+    }
+  </script>
+
+<script>
+function showUser()
+{
+  let activeuser = localStorage.getItem("activeuser");
+  document.getElementById("emailid").value=activeuser;
+}
+
+</script>
+
+</head>
+<body onload="showUser()">
+
+  <div class="container">
+    <div class="form-container">
+      <h4 class="text-center mb-4">Organiser Details Form</h4>
+
+      <form action="/orgn-details" method="post" enctype="multipart/form-data" class="row g-3">
+
+
+        <div class="col-md-6">
+          <label for="emailid" class="form-label">Email</label>
+          <input type="email" class="form-control" name="emailid" id="emailid" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <button type="button" class="btn btn-dark px-4" id="btnSearchAJAX">Search</button>
+        </div>
+
+
+        <div class="col-md-6">
+          <label for="orgname" class="form-label">Organisation Name</label>
+          <input type="text" class="form-control" id="orgname" name="orgname">
+        </div>
+
+        <div class="col-md-6">
+          <label for="regnumber" class="form-label">Registration Number</label>
+          <input type="text" class="form-control" id="regnumber" name="regnumber">
+        </div>
+
+        <div class="col-md-6">
+          <label for="address" class="form-label">Address</label>
+          <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St">
+        </div>
+
+        <div class="col-md-6">
+          <label for="city" class="form-label">City</label>
+          <input type="text" class="form-control" name="city" id="city">
+        </div>
+
+        <div class="col-md-6">
+          <label for="sports" class="form-label">Deals in Sports</label>
+          <input type="text" class="form-control" name="sports" id="sports">
+        </div>
+
+        <div class="col-md-6">
+          <label for="website" class="form-label">Website</label>
+          <input type="text" class="form-control" name="website" id="website">
+        </div>
+
+        <div class="col-md-6">
+          <label for="insta" class="form-label">Instagram Link</label>
+          <input type="text" class="form-control" name="insta" id="insta">
+        </div>
+
+        <div class="col-md-6">
+          <label for="head" class="form-label">Head of Organisation</label>
+          <input type="text" class="form-control" name="head" id="head">
+        </div>
+
+        <div class="col-md-6">
+          <label for="contact" class="form-label">Contact Number</label>
+          <input type="text" class="form-control" name="contact" id="contact">
+        </div>
+
+        <div class="col-md-7">
+          <label for="picurl" class="form-label">Registration Certificate Pic</label>
+          <input type="file" class="form-control" name="picurl" id="picurl" onchange="showPrev(picurl, prev)">
+          <img id="prev" src="pics/customer.jpg" alt="Preview">
+          <input type="hidden" id="hdn" name="hdn">
+        </div>
+
+        <div class="col-12">
+          <label for="otherinfo" class="form-label">Other Information</label>
+          <textarea class="form-control" name="otherinfo" id="otherinfo" rows="3"></textarea>
+        </div>
+
+        <div class="col-md-6 text-center">
+          <button type="submit" class="btn btn-dark px-4">Send to Server</button>
+        </div>
+        <div class="col-md-6 text-center">
+          <button type="submit" class="btn btn-dark px-4" formaction="/update-user">Modify</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- JS: Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

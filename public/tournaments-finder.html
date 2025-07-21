@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tournament Viewer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var mymodule = angular.module("kuchModule", []);
+
+    mymodule.controller("kuchController", function ($scope, $http) {
+      $scope.jsonArray = [];
+      $scope.selCity;
+      $scope.selGame;
+      $scope.doFetchAll = function () {
+
+        var url = "/do-fetch-all-tournaments?kuchCity=" + $scope.selCity + "&kuchGame=" + $scope.selGame;
+
+
+        $http.get(url).then(allGoodFx, someBadFx);
+        function allGoodFx(response) {
+          //resp in JSON array
+          //alert(JSON.stringify(response.data));
+          $scope.jsonArray = response.data;
+        }
+
+        function someBadFx(response) {
+          alert(JSON.stringify(response.data));
+        }
+      };
+      //---------------------------------------------------------------
+      $scope.cities = [{}];
+      $scope.doFetchAllCities = function () {
+        var url = "/do-fetch-all-cities";
+
+        $http.get(url).then(function (response) {
+          // alert(JSON.stringify(response.data));
+          $scope.cities = response.data;
+        },
+          function (response) {
+            // alert(JSON.stringify(response.data));
+          });
+      };
+
+
+      //==================================================
+      $scope.oneRecord = {};
+      $scope.doShowDetails = function (index) {
+        //alert(JSON.stringify($scope.jsonArray[index]))
+        $scope.oneRecord = $scope.jsonArray[index];
+
+      }
+    });
+  </script>
+
+</head>
+
+<body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchAllCities();">
+
+
+  <center>
+    <h2>All TOURNAMENTS</h2>
+    <div class="container">
+
+
+
+
+     <select ng-model="selGame" class="form-select form-select-lg mb-3" aria-label="Select Sport">
+  <option value="" disabled selected>SELECT SPORT</option>
+
+        <optgroup label="Outdoor Sports">
+          <option>Cricket</option>
+          <option>Football</option>
+          <option>Hockey</option>
+          <option>Volleyball</option>
+          <option>Basketball</option>
+          <option>Baseball</option>
+          <option>Rugby</option>
+          <option>Kho-Kho</option>
+          <option>Kabaddi</option>
+          <option>Track & Field (Athletics)</option>
+          <option>High Jump</option>
+          <option>Long Jump</option>
+          <option>Javelin Throw</option>
+          <option>Shot Put</option>
+          <option>Discus Throw</option>
+          <option>Marathon</option>
+          <option>Archery</option>
+          <option>Skating</option>
+          <option>Horse Riding</option>
+          <option>Cycling</option>
+          <option>Golf</option>
+          <option>Surfing</option>
+          <option>Skateboarding</option>
+          <option>Mountain Biking</option>
+        </optgroup>
+
+        <optgroup label="Indoor Sports">
+          <option>Badminton</option>
+          <option>Table Tennis</option>
+          <option>Boxing</option>
+          <option>Wrestling</option>
+          <option>Judo</option>
+          <option>Karate</option>
+          <option>Taekwondo</option>
+          <option>Chess</option>
+          <option>Carrom</option>
+          <option>Snooker</option>
+          <option>Weightlifting</option>
+          <option>Powerlifting</option>
+          <option>Bodybuilding</option>
+          <option>Esports</option>
+          <option>Yoga</option>
+          <option>Gymnastics</option>
+          <option>Dodgeball</option>
+          <option>Handball (Indoor)</option>
+          <option>Shooting (Indoor Range)</option>
+          <option>Bowling</option>
+        </optgroup>
+
+        <optgroup label="Water Sports">
+          <option>Swimming</option>
+          <option>Water Polo</option>
+          <option>Diving</option>
+          <option>Sailing</option>
+          <option>Rowing</option>
+          <option>Canoeing</option>
+          <option>Windsurfing</option>
+        </optgroup>
+      </SELECT>
+      <select class="form-select form-select-lg mb-3" aria-label="Large select example" ng-model="selCity">
+        <option VALUE="" disabled selected>SELECT CITY</option>
+
+
+
+        <option value="none">select</option>
+        <option ng-repeat="obj in cities" value="{{obj.city}}">{{obj.city}}</option>
+      </select>
+      <input type="button" value="Find Tournaments" class="form-select-lg mb-3  aria-label=" Large select example"
+        ng-click="doFetchAll();">
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3  p-3 mb-2" ng-repeat="obj in jsonArray">
+          <div class="card">
+
+            <div class="card-body">
+              <h5 class="card-title">
+                {{obj.city}}
+              </h5>
+              <p class="card-text">
+                {{obj.sports}}
+              </p>
+              <a href="#" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#detailsModal"
+                ng-click="doShowDetails($index);">Contact Organiser</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ************************** -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+
+            <p>Email ID of Organiser : {{oneRecord.emailid}}</p>
+            <p>Event Name : {{oneRecord.event}}</p>
+            <p>Date : {{oneRecord.date | date:'dd-MM-yyyy'}}</p>
+            <p>Time : {{oneRecord.time}}</p>
+            <p>Venue Address : {{oneRecord.address}}</p>
+            <p>City : {{oneRecord.city}}</p>
+            <p>Sport : {{oneRecord.sports}}</p>
+            <p>Minimum Age : {{oneRecord.minage}}</p>
+            <p>Maximum Age : {{oneRecord.maxage}}</p>
+            <p>Last Date to Register : {{oneRecord.lastdate | date:'dd-MM-yyyy'}}</p>
+            <p>Entry Fee : ₹{{oneRecord.fee}}</p>
+            <p>Winning Prize : ₹{{oneRecord.prize}}</p>
+            <p>Contact Number : {{oneRecord.contact}}</p>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </center>
+</body>
+
+</html>
