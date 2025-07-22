@@ -20,6 +20,9 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <!-- ANGULAR JS SCRIPT  -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <!-- font awesome -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 
   <!-- CODE FOR MOVING TEXT  -->
   <script>
@@ -121,6 +124,87 @@
 
 
   </script>
+  <style>.ok {
+  color: green;
+}
+
+.not-ok {
+  color: red;
+}
+
+.ok-pic::after {
+  content: "✔️";
+  color: green;
+}
+
+.not-ok-pic::after {
+  content: "❌";
+  color: red;
+}
+</style>
+
+<script>
+    $(document).ready(function(){
+
+        // === EMAIL VALIDATION ===
+        $("#txtEmail").keyup(function(){
+            let email = $(this).val();
+            let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+            if(email == "") {
+                $("#errMsgE").html("⚠️ Email can't be empty").addClass("not-ok").removeClass("ok");
+                $("#errPicE").addClass("not-ok-pic").removeClass("ok-pic");
+            }
+            else if(!regex.test(email)) {
+                $("#errMsgE").html("❌ Invalid email format").addClass("not-ok").removeClass("ok");
+                $("#errPicE").addClass("not-ok-pic").removeClass("ok-pic");
+            }
+            else {
+                $("#errMsgE").html("✅ Looks good!").addClass("ok").removeClass("not-ok");
+                $("#errPicE").addClass("ok-pic").removeClass("not-ok-pic");
+            }
+        });
+
+        // === PASSWORD VALIDATION ===
+        $("#txtPwd").keyup(function(){
+            let pwd = $(this).val();
+            let msg = "";
+            let hasUpper = /[A-Z]/.test(pwd);
+            let hasLower = /[a-z]/.test(pwd);
+            let hasDigit = /[0-9]/.test(pwd);
+            let hasSpecial = /[!@#$%^&*]/.test(pwd);
+            let isLong = pwd.length >= 8;
+
+            if(pwd == "") {
+                $("#lblPwd").html("⚠️ Password is empty").addClass("not-ok").removeClass("ok");
+            }
+            else if(!isLong) {
+                $("#lblPwd").html("❌ At least 8 characters").addClass("not-ok").removeClass("ok");
+            }
+            else if(!(hasUpper && hasLower && hasDigit)) {
+                $("#lblPwd").html("❌ Use A-Z, a-z, 0-9").addClass("not-ok").removeClass("ok");
+            }
+            else if(!hasSpecial) {
+                $("#lblPwd").html("❌ Add a special character (!@#$...)").addClass("not-ok").removeClass("ok");
+            }
+            else {
+                $("#lblPwd").html("✅ Strong Password").addClass("ok").removeClass("not-ok");
+            }
+        });
+
+        // === EYE TOGGLE ===
+        $("#eye").click(function() {
+            let type = $("#txtPwd").prop("type");
+            if(type == "password") {
+                $("#txtPwd").prop("type", "text");
+                $("#eye").removeClass("fa-eye").addClass("fa-eye-slash");
+            } else {
+                $("#txtPwd").prop("type", "password");
+                $("#eye").removeClass("fa-eye-slash").addClass("fa-eye");
+            }
+        });
+    });
+</script>
 
 </head>
 
@@ -172,11 +256,18 @@
             <div class="col-12">
               <label for="txtEmail" class="form-label">Email ID</label>
               <input type="email" class="form-control" id="txtEmail" name="txtEmail" required>
+              <span id="errPicE" class="ms-2"></span>
+<p id="errMsgE" class="text-danger small mt-1"></p>
             </div>
             <div class="col-12">
               <label for="txtPwd" class="form-label">Password</label>
               <input type="password" class="form-control" id="txtPwd" name="txtPwd" required>
+              <span class="input-group-text">
+    <i class="fa fa-eye" id="eye" style="cursor:pointer;"></i>
+  </span>
             </div>
+            <p id="lblPwd" class="text-danger small mt-1"></p>
+
             <div class="col-12">
               <label for="comboUser" class="form-label">User Type</label>
               <select id="comboUser" class="form-select" name="comboUser" required>
