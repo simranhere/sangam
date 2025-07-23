@@ -73,11 +73,8 @@ function showUser()
   let activeuser = localStorage.getItem("activeuser");
   document.getElementById("welcome").innerHTML=activeuser;
 }
-function showemail()
-{
-  let activeuser = localStorage.getItem("activeuser");
- document.getElementById("emailid").value=activeuser;
-}
+
+
  function doLogout(){
   localStorage.removeItem("activeuser");
   location.href="index.html";
@@ -87,7 +84,7 @@ function showemail()
 </script>
 </head>
 
-<body ng-app="kuchModule" onload="showUser(),showemail()" ng-controller="kuchController" class="bg-light">
+<body ng-app="kuchModule" onload="showUser()" ng-controller="kuchController" class="bg-light">
 
 
   <div class="container dashboard-container">

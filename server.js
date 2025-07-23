@@ -210,24 +210,29 @@ app.post("/orgn-details", async function (req, resp) {
 // SIGNUP USER
 
 app.get("/server-signup", function (req, resp) {
-    let email = req.query.txtEmail;
-    let pwd = req.query.txtPwd;
-    let utype = req.query.comboUser;
-    let dos = new Date();
-    let status = 1;
+  let email = req.query.txtEmail;
+  let pwd = req.query.txtPwd;
+  let utype = req.query.comboUser;
+  let dos = new Date();
+  let status = 1;
 
-    console.log("Signup request received:", email, pwd, utype);
+  console.log("Signup request received:", email, pwd, utype);
 
-    let query = "INSERT INTO users (emailid, pwd, utype, dos, status) VALUES (?, ?, ?, ?, ?)";
+  let query = "INSERT INTO users (emailid, pwd, utype, dos, status) VALUES (?, ?, ?, ?, ?)";
 
-    mySqlVen.query(query, [email, pwd, utype, dos, status], function (err, result) {
-        if (err) {
-            resp.send("Signup failed: " + err.message);
-        } else {
-            resp.send("Signup successful!");
-        }
-    });
+  mySqlVen.query(query, [email, pwd, utype, dos, status], function (err, result) {
+    if (err) {
+      resp.send("Signup failed: " + err.message);
+    } else {
+      //  Send welcome email after successful insert
+      sendWelcomeMail(email, utype);
+
+
+      resp.send("Signup successful!");
+    }
+  });
 });
+
 
 // LOGIN USER
 app.get("/do-login", function (req, resp) {
@@ -619,3 +624,64 @@ VALUES (?, ?, ?)`;
         }
     });
 });
+
+// Node-Mailer
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // or 'hotmail', 'yahoo', etc.
+  auth: {
+    user: 'sangam.platform@gmail.com',
+    pass: 'yftwsbcsmzlkpmwu',
+  },
+});
+function sendWelcomeMail(toEmail, utype) {
+  let subject = "Welcome to Sangam!";
+  let htmlContent = "";
+
+  if (utype.toLowerCase() === "player") {
+    htmlContent = `
+      <h2>Hey Player 👟</h2>
+      <p>Welcome to <strong>Sangam</strong> – where passion meets performance!</p>
+      <p>You're now part of a growing network of athletes, tournaments, and opportunities to shine.</p>
+      <p>Stay ready. Greatness begins now!</p>
+      <br>
+      <p>⚡ Team Sangam</p>
+    `;
+  } else if (utype.toLowerCase() === "organizer") {
+    htmlContent = `
+      <h2>Hello Organizer 📣</h2>
+      <p>Welcome to <strong>Sangam</strong> – your all-in-one platform to create, manage, and scale sports events!</p>
+      <p>Start building experiences that players and audiences will never forget.</p>
+      <p>Let’s make something epic.</p>
+      <br>
+      <p>🎯 Team Sangam</p>
+    `;
+  } else {
+    // Default if unknown
+    htmlContent = `
+      <h2>Welcome!</h2>
+      <p>Thank you for joining <strong>Sangam</strong>.</p>
+      <p>Let’s create something meaningful together.</p>
+      <br>
+      <p>— Team Sangam</p>
+    `;
+  }
+
+  const mailOptions = {
+    from: '"Sangam Platform" <sangam.platform@gmail.com>',
+    to: toEmail,
+    subject: subject,
+    html: htmlContent,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(' Error sending email:', error);
+    } else {
+      console.log(' Email sent:', info.response);
+    }
+  });
+}
+
+
