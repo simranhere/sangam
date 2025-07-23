@@ -228,7 +228,7 @@ app.get("/server-signup", function (req, resp) {
       sendWelcomeMail(email, utype);
 
 
-      resp.send("Signup successful!");
+      resp.send("Signup successful, Please Check Your Inbox");
     }
   });
 });
