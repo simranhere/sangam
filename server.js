@@ -167,7 +167,7 @@ app.post("/orgn-details", async function (req, resp) {
         req.files.picurl.mv(fullPath);
 
         await cloudinary.uploader.upload(fullPath).then(function (picUrlResult) {
-            picurl = picUrlResult.url;   //will give u the url of ur pic on cloudinary server
+            picurl = picUrlResult.url;   //will givethe url of ur pic on cloudinary server
 
             console.log(picurl);
         });
@@ -684,4 +684,17 @@ function sendWelcomeMail(toEmail, utype) {
   });
 }
 
+// delte user in admin
+app.get("/delete-user", function (req, resp) {
+    let emailid = req.query.emailid;
+
+    mySqlVen.query("DELETE FROM users WHERE emailid = ?", [emailid], function (err, result) {
+        if (err)
+            resp.send(err);
+        else if (result.affectedRows === 1)
+            resp.send("User Deleted Successfully!");
+        else
+            resp.send("Invalid Email ID");
+    });
+});
 
